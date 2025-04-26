@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rock Paper Scissors</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background-color: #f0f0f0;
+      padding: 40px;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #333;
+      margin-bottom: 30px;
+    }
+    .game-container {
+      background-color: #fff;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .buttons {
+      margin: 20px 0;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 16px;
+      background-color: #4285f4;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    button:hover {
+      background-color: #3367d6;
+    }
+    button:disabled {
+      background-color: #cccccc;
+      cursor: not-allowed;
+    }
+    #result {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      color: #333;
+      min-height: 30px;
+    }
+    .score-board {
+      display: flex;
+      justify-content: space-around;
+      margin-top: 20px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      border-radius: 5px;
+    }
+    .score {
+      font-size: 16px;
+    }
+    .score span {
+      font-weight: bold;
+      color: #4285f4;
+    }
+    .attempts {
+      margin-top: 15px;
+      font-size: 16px;
+      color: #666;
+    }
+    #final-result {
+      margin-top: 20px;
+      font-size: 20px;
+      font-weight: bold;
+      color: #e63946;
+      min-height: 30px;
+    }
+    #reset-btn {
+      margin-top: 20px;
+      background-color: #e63946;
+    }
+    #reset-btn:hover {
+      background-color: #c1121f;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-container">
+    <h1>Rock, Paper, Scissors</h1>
+    
+    <div class="buttons">
+      <button id="rock-btn" onclick="play('rock')">Rock</button>
+      <button id="paper-btn" onclick="play('paper')">Paper</button>
+      <button id="scissors-btn" onclick="play('scissors')">Scissors</button>
+    </div>
+    
+    <div id="result">Choose an option to play!</div>
+    <div id="final-result"></div>
+    
+    <div class="score-board">
+      <div class="score">You: <span id="user-score">0</span></div>
+      <div class="score">Computer: <span id="computer-score">0</span></div>
+    </div>
+    
+    <div class="attempts">Attempts: <span id="attempts">0</span>/10</div>
+    
+    <button id="reset-btn" onclick="resetGame()" style="display: none;">Play Again</button>
+  </div>
+
+  <script>
+    // Initialize scores and attempts
+    let userScore = 0;
+    let computerScore = 0;
+    let attempts = 0;
+    const maxAttempts = 10;
+    
+    // Game logic
+    function play(userChoice) {
+      // Check if game is over
+      if (attempts >= maxAttempts) {
+        return;
+      }
+      
+      // Get computer choice
+      const choices = ['rock', 'paper', 'scissors'];
+      const computerChoice = choices[Math.floor(Math.random() * 3)];
+      
+      // Determine winner
+      let result = '';
+      
+      if (userChoice === computerChoice) {
+        result = "It's a draw! Computer also chose " + computerChoice;
+      } else if (
+        (userChoice === 'rock' && computerChoice === 'scissors') ||
+        (userChoice === 'paper' && computerChoice === 'rock') ||
+        (userChoice === 'scissors' && computerChoice === 'paper')
+      ) {
+        result = "You Win! Computer chose " + computerChoice;
+        userScore++;
+      } else {
+        result = "You Lose! Computer chose " + computerChoice;
+        computerScore++;
+      }
+      
+      // Update attempt counter
+      attempts++;
+      
+      // Update UI
+      document.getElementById('result').textContent = result;
+      document.getElementById('user-score').textContent = userScore;
+      document.getElementById('computer-score').textContent = computerScore;
+      document.getElementById('attempts').textContent = attempts;
+      
+      // Check if game is over
+      if (attempts >= maxAttempts) {
+        endGame();
+      }
+    }
+    
+    // End game and declare winner
+    function endGame() {
+      const finalResult = document.getElementById('final-result');
+      const gameButtons = document.querySelectorAll('.buttons button');
+      
+      // Disable game buttons
+      gameButtons.forEach(button => {
+        button.disabled = true;
+      });
+      
+      // Show reset button
+      document.getElementById('reset-btn').style.display = 'inline-block';
+      
+      // Declare winner
+      if (userScore > computerScore) {
+        finalResult.textContent = "Game Over! You are the WINNER!";
+        finalResult.style.color = "#2ecc71";
+      } else if (computerScore > userScore) {
+        finalResult.textContent = "Game Over! Computer WINS!";
+        finalResult.style.color = "#e74c3c";
+      } else {
+        finalResult.textContent = "Game Over! It's a TIE!";
+        finalResult.style.color = "#f39c12";
+      }
+    }
+    
+    // Reset game
+    function resetGame() {
+      userScore = 0;
+      computerScore = 0;
+      attempts = 0;
+      
+      // Update UI
+      document.getElementById('result').textContent = "Choose an option to play!";
+      document.getElementById('final-result').textContent = "";
+      document.getElementById('user-score').textContent = userScore;
+      document.getElementById('computer-score').textContent = computerScore;
+      document.getElementById('attempts').textContent = attempts;
+      
+      // Enable game buttons
+      const gameButtons = document.querySelectorAll('.buttons button');
+      gameButtons.forEach(button => {
+        button.disabled = false;
+      });
+      
+      // Hide reset button
+      document.getElementById('reset-btn').style.display = 'none';
+    }
+  </script>
+</body>
+</html>
