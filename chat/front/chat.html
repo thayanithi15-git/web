@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Two-Person Chat</title>
+  <script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+  <style>
+    body {
+      font-family: sans-serif;
+      max-width: 600px;
+      margin: 40px auto;
+    }
+    #chat {
+      border: 1px solid #ccc;
+      padding: 10px;
+      height: 400px;
+      overflow-y: scroll;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .msg {
+      max-width: 60%;
+      padding: 8px 12px;
+      border-radius: 10px;
+      margin: 2px 0;
+    }
+    .left {
+      align-self: flex-start;
+      background-color: #e0e0e0;
+    }
+    .right {
+      align-self: flex-end;
+      background-color: #d1ffd1;
+    }
+    form {
+      display: flex;
+      margin-top: 10px;
+    }
+    input, select {
+      padding: 10px;
+      font-size: 14px;
+    }
+    #input {
+      flex: 1;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>Two-Person Chat</h2>
+  <label for="userSelect">You are:</label>
+  <select id="userSelect">
+    <option value="A">User A</option>
+    <option value="B">User B</option>
+  </select>
+  <div id="chat"></div>
+  <form id="form">
+    <input id="input" placeholder="Type your message..." autocomplete="off" />
+    <button type="submit">Send</button>
+  </form>
+  <script>
+    const socket = io("http://localhost:3000");
+    const chat = document.getElementById("chat");
+    const form = document.getElementById("form");
+    const input = document.getElementById("input");
+    const userSelect = document.getElementById("userSelect");
+    
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const sender = userSelect.value;
+      const text = input.value.trim();
+      if (text) {
+        socket.emit("chat message", { sender, text });
+        input.value = "";
+      }
+    });
+    
+    socket.on("chat message", ({ sender, text }) => {
+      const msgDiv = document.createElement("div");
+      msgDiv.classList.add("msg");
+      const currentUser = userSelect.value;
+      msgDiv.classList.add(sender === currentUser ? "right" : "left");
+      msgDiv.textContent = `${sender}: ${text}`;
+      chat.appendChild(msgDiv);
+      chat.scrollTop = chat.scrollHeight;
+    });
+  </script>
+</body>
+</html>

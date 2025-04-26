@@ -1,0 +1,18 @@
+USE ecommerce;
+
+-- Create products table
+CREATE TABLE IF NOT EXISTS products (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  name VARCHAR(255) NOT NULL,
+  price DECIMAL(10, 2) NOT NULL,
+  offer INT DEFAULT 0,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Insert sample data
+INSERT INTO products (name, price, offer) VALUES 
+  ('T-Shirt', 500, 10),
+  ('Jeans', 1000, 0),
+  ('Shoes', 1500, 15),
+  ('Watch', 2000, 5),
+  ('Backpack', 800, 0);
